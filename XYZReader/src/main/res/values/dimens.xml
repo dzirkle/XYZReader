@@ -10,4 +10,7 @@
     <!-- FAB -->
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- Grid item spacing -->
+    <dimen name="grid_item_spacing">4dp</dimen>
+
 </resources>
