@@ -19,6 +19,7 @@ import java.util.GregorianCalendar;
 
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -116,6 +118,15 @@ public class ArticleDetailFragment extends Fragment implements
         mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
 
         mStatusBarColorDrawable = new ColorDrawable(0);
+
+        // Set the up button click listener
+        final ImageButton mUpButton = mRootView.findViewById(R.id.action_up);
+        mUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((AppCompatActivity) getActivity()).onSupportNavigateUp();
+            }
+        });
 
         // Set the share FAB click listener
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
