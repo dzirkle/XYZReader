@@ -34,4 +34,5 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.7.0'
     implementation files('libs/volley.jar')
+    implementation 'com.jakewharton.timber:timber:4.7.0'
 }

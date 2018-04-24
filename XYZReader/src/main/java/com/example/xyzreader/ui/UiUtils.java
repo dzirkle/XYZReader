@@ -1,9 +1,7 @@
 package com.example.xyzreader.ui;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.util.DisplayMetrics;
-import android.view.Display;
 
 public class UiUtils {
     /**

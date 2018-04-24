@@ -32,6 +32,4 @@
             android:paddingBottom="28dp" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
-
 </android.support.constraint.ConstraintLayout>

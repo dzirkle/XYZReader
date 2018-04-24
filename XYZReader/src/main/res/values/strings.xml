@@ -13,4 +13,7 @@
     <string name="cd_article_list_item_thumbnail">Article thumbnail image</string>
     <string name="cd_article_detail_image">Article detail image</string>
 
+    <!-- Transition names -->
+    <string name="image_transition">image transition</string>
+
 </resources>

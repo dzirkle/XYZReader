@@ -113,6 +113,8 @@
             android:paddingBottom="@dimen/detail_body_bottom_margin"
             android:textColorLink="@color/colorAccent"
             android:textSize="@dimen/detail_body_text_size"
+            android:maxLines="5"
+            android:ellipsize="end"
             android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" />
 
     </android.support.v4.widget.NestedScrollView>

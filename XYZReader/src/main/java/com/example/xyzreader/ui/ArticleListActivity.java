@@ -1,75 +1,161 @@
 package com.example.xyzreader.ui;
 
-import android.app.LoaderManager;
+import android.app.ActivityOptions;
+import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.app.SharedElementCallback;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
+import android.support.v4.content.Loader;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.ViewTreeObserver;
 
-import com.android.volley.toolbox.NetworkImageView;
+import com.example.xyzreader.BuildConfig;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+
+import timber.log.Timber;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
  * handset and tablet-size devices. On handsets, the activity presents a list of items, which when
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
+ *
+ * The shared element transition approach is based on Alex Lockwood's work here:
+ *     https://github.com/alexjlockwood/adp-activity-transitions
  */
 public class ArticleListActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, ArticleAdapter.ArticleClickListener {
+    // todo document
+    static final String EXTRA_STARTING_ARTICLE_POSITION =
+            "com.example.xyzreader.ui.extra_starting_article_position";
+    static final String EXTRA_CURRENT_ARTICLE_POSITION =
+            "com.example.xyzreader.ui.extra_current_article_position";
 
-    private static final String TAG = ArticleListActivity.class.toString();
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
+    private GridLayoutManager mLayoutManager;
+    private ArticleAdapter mArticleAdapter;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
-    // Use default locale format
-    private SimpleDateFormat outputFormat = new SimpleDateFormat();
-    // Most time functions can only handle 1902 - 2037
-    private GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+    // todo document
+    private Bundle mTmpReenterState;
+
+    // todo document
+    private boolean mIsDetailsActivityStarted;
+
+    private boolean mIsRefreshing = false;
+
+    // todo document
+    private final SharedElementCallback mCallback = new SharedElementCallback() {
+        @Override
+        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+            if (mTmpReenterState != null) {
+                Timber.d("mTmpReenterState != null");
+
+                int startingPosition = mTmpReenterState.getInt(EXTRA_STARTING_ARTICLE_POSITION);
+                int currentPosition = mTmpReenterState.getInt(EXTRA_CURRENT_ARTICLE_POSITION);
+                if (startingPosition != currentPosition) {
+                    // If startingPosition != currentPosition the user must have swiped to a
+                    // different page in the DetailsActivity. We must update the shared element
+                    // so that the correct one falls into place.
+//                    String newTransitionName = ALBUM_NAMES[currentPosition];
+                    final ArticleAdapter.ViewHolder viewHolder = (ArticleAdapter.ViewHolder)
+                            mRecyclerView.findViewHolderForAdapterPosition(currentPosition);
+                    String newTransitionName = viewHolder.thumbnailView.getTransitionName();
+                    Timber.d("New transition name: " + newTransitionName);
+
+                    View newSharedElement = mRecyclerView.findViewWithTag(newTransitionName);
+                    if (newSharedElement != null) {
+                        names.clear();
+                        names.add(newTransitionName);
+                        sharedElements.clear();
+                        sharedElements.put(newTransitionName, newSharedElement);
+                    }
+                }
+
+                mTmpReenterState = null;
+            } else {
+                Timber.d("mTmpReenterState == null");
+
+                // If mTmpReenterState is null, then the activity is exiting.
+                View navigationBar = findViewById(android.R.id.navigationBarBackground);
+                View statusBar = findViewById(android.R.id.statusBarBackground);
+                if (navigationBar != null) {
+                    names.add(navigationBar.getTransitionName());
+                    sharedElements.put(navigationBar.getTransitionName(), navigationBar);
+                }
+                if (statusBar != null) {
+                    names.add(statusBar.getTransitionName());
+                    sharedElements.put(statusBar.getTransitionName(), statusBar);
+                }
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
+        // Set up Timber. This app won't be released, so only debug build configs are supported.
+        if (BuildConfig.DEBUG) {
+            // Use the default Timber DebugTree for debug builds
+            Timber.plant(new Timber.DebugTree() {
+                // Override createStackElementTag in order to add the line number to the tag
+                @Override
+                protected String createStackElementTag(@NonNull final StackTraceElement element) {
+                    // Add the line number to the default tag
+                    return super.createStackElementTag(element) + ":" + element.getLineNumber();
+                }
+            });
+        }
+
+        // todo document
+        setExitSharedElementCallback(mCallback);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        getLoaderManager().initLoader(0, null, this);
+        // Get the recycler view
+        mRecyclerView = findViewById(R.id.recycler_view);
 
+        // Create and configure the article adapter, then set it on the recycler view
+        mArticleAdapter = new ArticleAdapter(this, null, this);
+        mArticleAdapter.setHasStableIds(true);
+        mRecyclerView.setAdapter(mArticleAdapter);
+
+        // Create and configure the layout manager, then set it on the recycler view
+        final int columnCount = UiUtils.getArticleListColumns(this);
+        mLayoutManager = new GridLayoutManager(this, columnCount);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // Create the the item spacing decoration and set it on the recycler view
+        final GridItemSpacingDecoration itemDecoration =
+                new GridItemSpacingDecoration(this, R.dimen.grid_item_spacing);
+        mRecyclerView.addItemDecoration(itemDecoration);
+
+        // Initiate the data load
+        getSupportLoaderManager().initLoader(0, null, this);
+
+        // Start the updater service if this is the initial activity creation
         if (savedInstanceState == null) {
-            refresh();
+            startUpdaterService();
         }
-    }
-
-    private void refresh() {
-        startService(new Intent(this, UpdaterService.class));
     }
 
     @Override
@@ -79,13 +165,58 @@ public class ArticleListActivity extends AppCompatActivity implements
                 new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
     }
 
+    // todo document
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIsDetailsActivityStarted = false;
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
     }
 
-    private boolean mIsRefreshing = false;
+    // todo document
+    @Override
+    public void onActivityReenter(int requestCode, Intent data) {
+        super.onActivityReenter(requestCode, data);
+
+        Timber.d("onActivityReenter");
+
+        mTmpReenterState = new Bundle(data.getExtras());
+        final int startingPosition = mTmpReenterState.getInt(EXTRA_STARTING_ARTICLE_POSITION);
+        final int currentPosition = mTmpReenterState.getInt(EXTRA_CURRENT_ARTICLE_POSITION);
+
+        Timber.d("startingPosition: " + startingPosition);
+        Timber.d("currentPosition: " + currentPosition);
+
+        if (startingPosition != currentPosition) {
+            mRecyclerView.scrollToPosition(currentPosition);
+            Timber.d("scrolled to position: " + currentPosition);
+        }
+
+        postponeEnterTransition();
+        Timber.d("postponed enter transition");
+
+
+        mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+                // TODO: figure out why it is necessary to request layout here in order to get a smooth transition.
+                mRecyclerView.requestLayout();
+                startPostponedEnterTransition();
+                Timber.d("started the postponed enter transition");
+                return true;
+            }
+        });
+    }
+
+    private void startUpdaterService() {
+        startService(new Intent(this, UpdaterService.class));
+    }
 
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
@@ -108,19 +239,8 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Adapter adapter = new Adapter(cursor);
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
-
-        // Configure the layout manager and set it on the recycler view
-        final int columnCount = UiUtils.getArticleListColumns(this);
-        final GridLayoutManager layoutManager = new GridLayoutManager(this, columnCount);
-        mRecyclerView.setLayoutManager(layoutManager);
-
-        // Set the item spacing decoration on the recycler view
-        final GridItemSpacingDecoration itemDecoration =
-                new GridItemSpacingDecoration(this, R.dimen.grid_item_spacing);
-        mRecyclerView.addItemDecoration(itemDecoration);
+        // Refresh the adapter data with the just-loaded cursor
+        mArticleAdapter.refreshData(cursor);
     }
 
     @Override
@@ -128,85 +248,34 @@ public class ArticleListActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(null);
     }
 
-    private class Adapter extends RecyclerView.Adapter<ViewHolder> {
-        private Cursor mCursor;
+    /**
+     * Handle article list item clicks
+     *
+     * @param position       clicked item adapter position
+     * @param transitionView shared element transition view
+     */
+    @Override
+    public void onArticleClick(final int position, final View transitionView) {
+        // Create an intent to launch the details activity
+        final Intent intent = new Intent(Intent.ACTION_VIEW,
+                ItemsContract.Items.buildItemUri(mArticleAdapter.getItemId(position)));
+        intent.putExtra(EXTRA_STARTING_ARTICLE_POSITION, position);
 
-        public Adapter(Cursor cursor) {
-            mCursor = cursor;
-        }
+        // todo document
+        // todo is the mIsDetailsActivityStarted guard needed?
+        if (!mIsDetailsActivityStarted) {
+            mIsDetailsActivityStarted = true;
 
-        @Override
-        public long getItemId(int position) {
-            mCursor.moveToPosition(position);
-            return mCursor.getLong(ArticleLoader.Query._ID);
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
-            final ViewHolder vh = new ViewHolder(view);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
-                }
-            });
-            return vh;
-        }
-
-        private Date parsePublishedDate() {
-            try {
-                String date = mCursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
-                return dateFormat.parse(date);
-            } catch (ParseException ex) {
-                Log.e(TAG, ex.getMessage());
-                Log.i(TAG, "passing today's date");
-                return new Date();
-            }
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            mCursor.moveToPosition(position);
-            holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            Date publishedDate = parsePublishedDate();
-            if (!publishedDate.before(START_OF_EPOCH.getTime())) {
-
-                holder.subtitleView.setText(Html.fromHtml(
-                        DateUtils.getRelativeTimeSpanString(
-                                publishedDate.getTime(),
-                                System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_ALL).toString()
-                                + "<br/>" + " by "
-                                + mCursor.getString(ArticleLoader.Query.AUTHOR)));
+            // Set up a shared element transition for the photo if the build version >= 21.
+            // Otherwise, simply start the details activity without the transition.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                final Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(
+                        ArticleListActivity.this, transitionView,
+                        transitionView.getTransitionName()).toBundle();
+                startActivity(intent, bundle);
             } else {
-                holder.subtitleView.setText(Html.fromHtml(
-                        outputFormat.format(publishedDate)
-                        + "<br/>" + " by "
-                        + mCursor.getString(ArticleLoader.Query.AUTHOR)));
+                startActivity(intent);
             }
-            holder.thumbnailView.setImageUrl(
-                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
-        }
-
-        @Override
-        public int getItemCount() {
-            return mCursor.getCount();
-        }
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public NetworkImageView thumbnailView;
-        public TextView titleView;
-        public TextView subtitleView;
-
-        public ViewHolder(View view) {
-            super(view);
-            thumbnailView = (NetworkImageView) view.findViewById(R.id.thumbnail);
-            titleView = (TextView) view.findViewById(R.id.article_title);
-            subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
         }
     }
 }
