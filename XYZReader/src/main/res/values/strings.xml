@@ -16,4 +16,7 @@
     <!-- Transition names -->
     <string name="image_transition">image transition</string>
 
+    <!-- Details fragment options menu titles -->
+    <string name="title_navigate_up">navigate up</string>
+
 </resources>
