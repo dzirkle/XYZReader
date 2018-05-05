@@ -24,8 +24,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- Base application theme without action bar -->
-    <style name="AppThemeNoActionbar" parent="AppTheme">
+    <!-- Details page theme -->
+    <style name="AppTheme.Details" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
