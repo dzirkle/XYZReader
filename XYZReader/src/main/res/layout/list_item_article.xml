@@ -1,13 +1,14 @@
 <!-- Article list item layout -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/article_list_item"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:orientation="horizontal"
     android:background="#FFFFFF">
 
     <!-- Article thumbnail -->
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="0dp"
         android:layout_weight="1"

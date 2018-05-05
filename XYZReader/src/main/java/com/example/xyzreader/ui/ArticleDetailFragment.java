@@ -46,23 +46,11 @@ public class ArticleDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ARG_ITEM_ID = "item_id";
 
-    // todo document
-    private static final String ARG_ARTICLE_POSITION =
-            "com.example.xyzreader.ui.arg_article_position";
-    private static final String ARG_STARTING_ARTICLE_POSITION =
-            "com.example.xyzreader.ui.arg_starting_article_position";
-
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
     private int mMutedColor = 0xFF333333;
     private ColorDrawable mStatusBarColorDrawable;
-
-    // todo document
-    private int mStartingPosition;
-    private int mPosition;
-    private boolean mIsTransitioning;
-    private long mBackgroundImageFadeMillis;
 
     private View mPhotoContainerView;
     private ImageView mPhotoView;
@@ -76,13 +64,9 @@ public class ArticleDetailFragment extends Fragment implements
     public ArticleDetailFragment() {
     }
 
-    public static ArticleDetailFragment newInstance(long itemId, int position, int startingPosition) {
+    public static ArticleDetailFragment newInstance(long itemId, int position) {
         Bundle arguments = new Bundle();
         arguments.putLong(ARG_ITEM_ID, itemId);
-
-        // todo document
-        arguments.putInt(ARG_ARTICLE_POSITION, position);
-        arguments.putInt(ARG_STARTING_ARTICLE_POSITION, startingPosition);
 
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);
@@ -93,34 +77,17 @@ public class ArticleDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            mItemId = getArguments().getLong(ARG_ITEM_ID);
+        // If this is the initial fragment creation, then parse the passed arguments. Otherwise,
+        // restore the prior instance saved state.
+        if (savedInstanceState == null) {
+            if (getArguments().containsKey(ARG_ITEM_ID)) {
+                mItemId = getArguments().getLong(ARG_ITEM_ID);
+            }
         }
-
-        // todo document
-        // todo handle missing keys, exceptions, etc.
-        mStartingPosition = getArguments().getInt(ARG_STARTING_ARTICLE_POSITION);
-        mPosition = getArguments().getInt(ARG_ARTICLE_POSITION);
-        mIsTransitioning = savedInstanceState == null && mStartingPosition == mPosition;
-        // todo clean up
-//        mBackgroundImageFadeMillis = getResources().getInteger(
-//                R.integer.fragment_details_background_image_fade_millis);
-        mBackgroundImageFadeMillis = 1000;
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(
                 R.dimen.detail_card_top_margin);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
-        // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
-        // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
-        // we do this in onActivityCreated.
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -135,7 +102,7 @@ public class ArticleDetailFragment extends Fragment implements
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().supportFinishAfterTransition();
+                getActivity().finish();
             }
         });
 
@@ -155,59 +122,20 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        // todo this stuff was in Lockwood's code
-//        if (mIsTransitioning) {
-//            albumImageRequest.noFade();
-//            backgroundImageRequest.noFade();
-//            backgroundImage.setAlpha(0f);
-//            getActivity().getWindow().getSharedElementEnterTransition().addListener(new TransitionListenerAdapter() {
-//                @Override
-//                public void onTransitionEnd(Transition transition) {
-//                    backgroundImage.animate().setDuration(mBackgroundImageFadeMillis).alpha(1f);
-//                }
-//            });
-//        }
-
         bindViews();
 
         return mRootView;
     }
 
-    // todo document
-    public void startPostponedEnterTransition() {
-        if (mPosition == mStartingPosition) {
-            mPhotoView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
-                    getActivity().startPostponedEnterTransition();
-                    return true;
-                }
-            });
-        }
-    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-    // todo document
-    /**
-     * Returns the shared element that should be transitioned back to the previous Activity,
-     * or null if the view is not visible on the screen.
-     */
-    @Nullable
-    ImageView getArticleImage() {
-        if (isViewInBounds(getActivity().getWindow().getDecorView(), mPhotoView)) {
-            return mPhotoView;
-        }
-        return null;
-    }
-
-    // todo document
-    /**
-     * Returns true if {@param view} is contained within {@param container}'s bounds.
-     */
-    private static boolean isViewInBounds(@NonNull View container, @NonNull View view) {
-        Rect containerBounds = new Rect();
-        container.getHitRect(containerBounds);
-        return view.getLocalVisibleRect(containerBounds);
+        // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
+        // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
+        // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
+        // we do this in onActivityCreated.
+        getLoaderManager().initLoader(0, null, this);
     }
 
     private void bindViews() {
@@ -247,24 +175,6 @@ public class ArticleDetailFragment extends Fragment implements
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mMutedColor);
 
-                                // todo document
-                                final String transitionName = mCursor.getString(ArticleLoader.Query.TITLE);
-                                mPhotoView.setTransitionName(transitionName);
-                                // todo remove
-                                Timber.d("dzdbg " + ": <" + transitionName + ">");
-
-                                // Set up a pre-draw listener to start the shared element transition as the view is drawn
-                                final View sharedElementTransitionView = mRootView.findViewById(R.id.photo);
-                                sharedElementTransitionView.getViewTreeObserver()
-                                        .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-
-                                            @Override
-                                            public boolean onPreDraw() {
-                                                sharedElementTransitionView.getViewTreeObserver().removeOnPreDrawListener(this);
-                                                startPostponedEnterTransition();
-                                                return true;
-                                            }
-                                        });
                             }
                         }
 

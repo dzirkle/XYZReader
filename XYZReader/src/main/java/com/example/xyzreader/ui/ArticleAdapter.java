@@ -2,14 +2,22 @@ package com.example.xyzreader.ui;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -55,7 +63,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return mCursor.getCount();
+        return mCursor != null ? mCursor.getCount() : 0;
     }
 
     // todo document
@@ -72,7 +80,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public NetworkImageView thumbnailView;
+        public ImageView thumbnailView;
         public TextView titleView;
         public TextView subtitleView;
         private int mPosition;
@@ -100,17 +108,55 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             subtitleView.setText(Html.fromHtml(ArticleDateUtils.outputDateString(cursor)
                     + "<br/>" + " by " + cursor.getString(ArticleLoader.Query.AUTHOR)));
 
-            thumbnailView.setImageUrl(
-                    cursor.getString(ArticleLoader.Query.THUMB_URL),
-                    ImageLoaderHelper.getInstance(mContext).getImageLoader());
+            //-----
+//            ImageLoaderHelper.getInstance(mContext).getImageLoader().get(cursor.getString(
+//                    ArticleLoader.Query.THUMB_URL), new ImageLoader.ImageListener() {
+//                        @Override
+//                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+//                            Bitmap bitmap = imageContainer.getBitmap();
+//                            if (bitmap != null) {
+//                                thumbnailView.setImageBitmap(imageContainer.getBitmap());
+//                                mBindViewHolderPositionListener.onBindViewHolderPosition(position);
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onErrorResponse(VolleyError volleyError) {
+//                            mBindViewHolderPositionListener.onBindViewHolderPosition(position);
+//                        }
+//                    });
 
-            // todo document
-            final String transitionName = mCursor.getString(ArticleLoader.Query.TITLE);
-            thumbnailView.setTransitionName(transitionName);
-            thumbnailView.setTag(transitionName);
-            // todo remove
-            Timber.d("position " + position + ": <" + transitionName + ">");
-            // ...
+
+            //-----
+            // Volley ImageRequest response listener
+            Response.Listener<Bitmap> imageListener = new Response.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap response) {
+                    //This call back method is executed in the UI-Thread, when the loading is finished
+                    thumbnailView.setImageBitmap(response); //example
+                }
+            };
+
+            // Volley ImageRequest error listener
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Timber.d("dzdbg: onErrorResponse()");
+                    //log your error
+                }
+            };
+
+            Timber.d("dzdbg: %s", cursor.getString(ArticleLoader.Query.THUMB_URL));
+
+            // Create the image request
+            ImageRequest getImageRequest = new ImageRequest(
+                    cursor.getString(ArticleLoader.Query.THUMB_URL),
+                    imageListener, 0, 0, null, errorListener);
+
+            // Add the image request to the queue
+            ImageLoaderHelper.getInstance(
+                    mContext.getApplicationContext()).getRequestQueue().add(getImageRequest);
+
             mPosition = position;
         }
 

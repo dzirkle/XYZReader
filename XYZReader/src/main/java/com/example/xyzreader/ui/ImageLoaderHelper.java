@@ -1,41 +1,70 @@
 package com.example.xyzreader.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+/**
+ * todo document
+ * https://developer.android.com/training/volley/requestqueue
+ */
 public class ImageLoaderHelper {
+    @SuppressLint("StaticFieldLeak")
     private static ImageLoaderHelper sInstance;
 
-    public static ImageLoaderHelper getInstance(Context context) {
+    private RequestQueue mRequestQueue;
+    private ImageLoader mImageLoader;
+
+    @SuppressLint("StaticFieldLeak")
+    private static Context mContext;
+
+    private ImageLoaderHelper(Context context) {
+        mContext = context;
+        mRequestQueue = getRequestQueue();
+
+        mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
+
+            private final LruCache<String, Bitmap> cache = new LruCache<>(20);
+
+            @Override
+            public Bitmap getBitmap(String url) {
+                return cache.get(url);
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap value) {
+                cache.put(url, value);
+            }
+
+
+        });
+    }
+
+    public static synchronized ImageLoaderHelper getInstance(Context context) {
         if (sInstance == null) {
-            sInstance = new ImageLoaderHelper(context.getApplicationContext());
+            sInstance = new ImageLoaderHelper(context);
         }
 
         return sInstance;
     }
 
-    private final LruCache<String, Bitmap> mImageCache = new LruCache<String, Bitmap>(20);
-    private ImageLoader mImageLoader;
+    public RequestQueue getRequestQueue() {
+        if (mRequestQueue == null) {
+            // getApplicationContext() is key, it keeps you from leaking the
+            // Activity or BroadcastReceiver if someone passes one in.
+            mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext());
+        }
+        return mRequestQueue;
+    }
 
-    private ImageLoaderHelper(Context applicationContext) {
-        RequestQueue queue = Volley.newRequestQueue(applicationContext);
-        ImageLoader.ImageCache imageCache = new ImageLoader.ImageCache() {
-            @Override
-            public void putBitmap(String key, Bitmap value) {
-                mImageCache.put(key, value);
-            }
-
-            @Override
-            public Bitmap getBitmap(String key) {
-                return mImageCache.get(key);
-            }
-        };
-        mImageLoader = new ImageLoader(queue, imageCache);
+    public <T> void addToRequestQueue(Request<T> req) {
+        getRequestQueue().add(req);
     }
 
     public ImageLoader getImageLoader() {

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -38,39 +37,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     // todo document
-    private static final String STATE_CURRENT_PAGE_POSITION =
-            "com.example.xyzreader.ui.state_current_page_position";
-
-    // todo document
     private ArticleDetailFragment mCurrentDetailsFragment;
-    private int mCurrentPosition;
-    private int mStartingPosition;
-    private boolean mIsReturning;
-
-    // todo document
-    private final SharedElementCallback mCallback = new SharedElementCallback() {
-        @Override
-        public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-            if (mIsReturning) {
-                ImageView sharedElement = mCurrentDetailsFragment.getArticleImage();
-                if (sharedElement == null) {
-                    // If shared element is null, then it has been scrolled off screen and
-                    // no longer visible. In this case we cancel the shared element transition by
-                    // removing the shared element from the shared elements map.
-                    names.clear();
-                    sharedElements.clear();
-                } else if (mStartingPosition != mCurrentPosition) {
-                    // If the user has swiped to a different ViewPager page, then we need to
-                    // remove the old shared element and replace it with the new shared element
-                    // that should be transitioned instead.
-                    names.clear();
-                    names.add(sharedElement.getTransitionName());
-                    sharedElements.clear();
-                    sharedElements.put(sharedElement.getTransitionName(), sharedElement);
-                }
-            }
-        }
-    };
 
     private Cursor mCursor;
     private long mStartId;
@@ -87,29 +54,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         // Postpone the shared element transition until the fragment is ready to be drawn
         postponeEnterTransition();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        }
         setContentView(R.layout.activity_article_detail);
-
-        // todo document
-        postponeEnterTransition();
-        setEnterSharedElementCallback(mCallback);
-
-        // todo document
-        mStartingPosition = getIntent().getIntExtra(
-                ArticleListActivity.EXTRA_STARTING_ARTICLE_POSITION, 0);
-        if (savedInstanceState == null) {
-            mCurrentPosition = mStartingPosition;
-        } else {
-            mCurrentPosition = savedInstanceState.getInt(STATE_CURRENT_PAGE_POSITION);
-        }
-
-        // todo remove
-        Timber.d("mStartingPosition: " + mStartingPosition);
-        Timber.d("mCurrentPosition: " + mCurrentPosition);
 
         getSupportLoaderManager().initLoader(0, null, this);
 
@@ -119,9 +64,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager.setPageMargin((int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
-
-        // todo document
-        mPager.setCurrentItem(mCurrentPosition);
 
         mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -135,13 +77,6 @@ public class ArticleDetailActivity extends AppCompatActivity
                     mCursor.moveToPosition(position);
                 }
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
-
-                // todo document
-                mCurrentPosition = position;
-
-                // todo remove
-                Timber.d("mStartingPosition: " + mStartingPosition);
-                Timber.d("mCurrentPosition: " + mCurrentPosition);
             }
         });
 
@@ -151,24 +86,6 @@ public class ArticleDetailActivity extends AppCompatActivity
                 mSelectedItemId = mStartId;
             }
         }
-    }
-
-    // todo document
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(STATE_CURRENT_PAGE_POSITION, mCurrentPosition);
-    }
-
-    // todo document
-    @Override
-    public void finishAfterTransition() {
-        mIsReturning = true;
-        Intent data = new Intent();
-        data.putExtra(ArticleListActivity.EXTRA_STARTING_ARTICLE_POSITION, mStartingPosition);
-        data.putExtra(ArticleListActivity.EXTRA_CURRENT_ARTICLE_POSITION, mCurrentPosition);
-        setResult(RESULT_OK, data);
-        super.finishAfterTransition();
     }
 
     @Override
@@ -220,7 +137,7 @@ public class ArticleDetailActivity extends AppCompatActivity
             mCursor.moveToPosition(position);
 
             // todo document
-            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), position, mStartingPosition);
+            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), position);
         }
 
         @Override
