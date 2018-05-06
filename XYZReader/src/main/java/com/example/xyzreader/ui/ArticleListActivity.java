@@ -40,7 +40,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private GridLayoutManager mLayoutManager;
-    private ArticleAdapter mArticleAdapter;
 
     private boolean mIsRefreshing = false;
 
@@ -76,11 +75,6 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         // Get the recycler view
         mRecyclerView = findViewById(R.id.recycler_view);
-
-        // Create and configure the article adapter, then set it on the recycler view
-        mArticleAdapter = new ArticleAdapter(this, null, this);
-        mArticleAdapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(mArticleAdapter);
 
         // Create and configure the layout manager, then set it on the recycler view
         final int columnCount = UiUtils.getArticleListColumns(this);
@@ -146,8 +140,10 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> cursorLoader, Cursor cursor) {
-        // Refresh the adapter data with the just-loaded cursor
-        mArticleAdapter.refreshData(cursor);
+        // Create and configure the article adapter, then set it on the recycler view
+        final ArticleAdapter articleAdapter = new ArticleAdapter(this, cursor, this);
+        articleAdapter.setHasStableIds(true);
+        mRecyclerView.setAdapter(articleAdapter);
     }
 
     @Override
@@ -165,7 +161,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     public void onArticleClick(final int position, final View transitionView) {
         // Create an intent to launch the details activity
         final Intent intent = new Intent(Intent.ACTION_VIEW,
-                ItemsContract.Items.buildItemUri(mArticleAdapter.getItemId(position)));
+                ItemsContract.Items.buildItemUri(mRecyclerView.getAdapter().getItemId(position)));
         startActivity(intent);
     }
 

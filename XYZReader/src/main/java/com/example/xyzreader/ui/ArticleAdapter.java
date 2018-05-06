@@ -63,12 +63,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         return mCursor != null ? mCursor.getCount() : 0;
     }
 
-    // todo document
-    public void refreshData(final Cursor cursor) {
-        mCursor = cursor;
-        notifyDataSetChanged();
-    }
-
     /**
      * Article click listener interface
      */
