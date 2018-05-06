@@ -19,4 +19,7 @@
     <!-- Details fragment options menu titles -->
     <string name="title_navigate_up">navigate up</string>
 
+    <!-- Error strings -->
+    <string name="error_missing_details_fragment_args">Missing detail fragment arguments</string>
+
 </resources>
