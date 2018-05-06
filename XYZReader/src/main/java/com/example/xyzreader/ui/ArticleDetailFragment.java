@@ -77,12 +77,9 @@ public class ArticleDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // If this is the initial fragment creation, then parse the passed arguments. Otherwise,
-        // restore the prior instance saved state.
-        if (savedInstanceState == null) {
-            if (getArguments().containsKey(ARG_ITEM_ID)) {
-                mItemId = getArguments().getLong(ARG_ITEM_ID);
-            }
+        // Parse the passed argument(s)
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            mItemId = getArguments().getLong(ARG_ITEM_ID);
         }
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
