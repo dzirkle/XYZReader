@@ -1,6 +1,7 @@
 package com.example.xyzreader.ui;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.example.xyzreader.BuildConfig;
@@ -48,6 +50,18 @@ public class ArticleListActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
+        // Disable the CollapsingToolbarLayout title so the title may be set on the Toolbar
+        final CollapsingToolbarLayout collapsingToolbarLayout
+                = findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
+        // Set the toolbar title
+        final Toolbar toolbar = findViewById(R.id.toolbar_list);
+        toolbar.setTitle(R.string.app_name);
+
+        // Set the toolbar as the action bar
+        setSupportActionBar(toolbar);
+
         // Whitelist this app's PID for logcat
         // todo remove when debugged
         try {
@@ -71,7 +85,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             });
         }
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
 
         // Get the recycler view
         mRecyclerView = findViewById(R.id.recycler_view);
