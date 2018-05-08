@@ -5,6 +5,7 @@
     <!-- todo fix -->
     <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
     <dimen name="detail_body_top_padding">32dp</dimen>
+    <dimen name="detail_body_max_width">450dp</dimen>
 
     <!-- Action bar -->
     <dimen name="action_bar_elevation">4dp</dimen>
