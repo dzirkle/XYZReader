@@ -2,7 +2,9 @@
     <!-- detail -->
     <dimen name="detail_title_text_size">32sp</dimen>
     <dimen name="detail_body_text_size">22sp</dimen>
+    <!-- todo fix -->
     <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
+    <dimen name="detail_body_top_padding">32dp</dimen>
 
     <!-- Action bar -->
     <dimen name="action_bar_elevation">4dp</dimen>
