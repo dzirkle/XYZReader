@@ -6,7 +6,10 @@
 
     <!-- Detail view dimensions -->
     <dimen name="detail_image_height">400dp</dimen>
+    <dimen name="detail_metabar_vert_padding">32dp</dimen>
+    <dimen name="detail_metabar_title_bottom_padding">8dp</dimen>
     <dimen name="detail_body_max_width">550dp</dimen>
+    <dimen name="detail_body_bottom_margin">96dp</dimen>
 
     <dimen name="fab_margin">24dp</dimen>
 </resources>

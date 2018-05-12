@@ -8,7 +8,10 @@
 
     <!-- Detail view dimensions -->
     <dimen name="detail_image_height">250dp</dimen>
+    <dimen name="detail_metabar_vert_padding">16dp</dimen>
+    <dimen name="detail_metabar_title_bottom_padding">4dp</dimen>
     <dimen name="detail_body_max_width">450dp</dimen>
+    <dimen name="detail_body_bottom_margin">88dp</dimen>
 
     <!-- Action bar -->
     <dimen name="action_bar_elevation">4dp</dimen>
