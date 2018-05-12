@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Detail view dimensions -->
+    <dimen name="detail_image_height">200dp</dimen>
     <dimen name="detail_body_max_width">600dp</dimen>
 </resources>

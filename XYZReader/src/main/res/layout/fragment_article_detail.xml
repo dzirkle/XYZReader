@@ -36,7 +36,7 @@
                     <ImageView
                         android:id="@+id/photo"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
+                        android:layout_height="@dimen/detail_image_height"
                         android:scaleType="centerCrop"
                         android:contentDescription="@string/cd_article_detail_image"/>
 
