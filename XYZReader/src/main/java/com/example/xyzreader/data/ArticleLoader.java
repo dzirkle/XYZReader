@@ -38,7 +38,14 @@ public class ArticleLoader extends CursorLoader {
         int AUTHOR = 3;
         int THUMB_URL = 4;
         int PHOTO_URL = 5;
+
+        /*
+         * This field is currently unused, but is retained since it's part of the contract. The
+         * "unused" warning is suppressed.
+         */
+        @SuppressWarnings("unused")
         int ASPECT_RATIO = 6;
+
         int BODY = 7;
     }
 }

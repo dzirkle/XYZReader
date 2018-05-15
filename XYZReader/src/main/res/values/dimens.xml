@@ -13,9 +13,6 @@
     <dimen name="detail_body_max_width">450dp</dimen>
     <dimen name="detail_body_bottom_margin">88dp</dimen>
 
-    <!-- Action bar -->
-    <dimen name="action_bar_elevation">4dp</dimen>
-
     <!-- FAB -->
     <dimen name="fab_margin">16dp</dimen>
 

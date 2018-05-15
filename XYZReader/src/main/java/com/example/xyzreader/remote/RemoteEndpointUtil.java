@@ -13,13 +13,11 @@ import okhttp3.Response;
 import timber.log.Timber;
 
 public class RemoteEndpointUtil {
-    private static final String TAG = "RemoteEndpointUtil";
-
     private RemoteEndpointUtil() {
     }
 
     public static JSONArray fetchJsonArray() {
-        String itemsJson = null;
+        String itemsJson;
         try {
             itemsJson = fetchPlainText(Config.BASE_URL);
         } catch (IOException e) {
@@ -42,7 +40,13 @@ public class RemoteEndpointUtil {
         return null;
     }
 
-    static String fetchPlainText(URL url) throws IOException {
+    /*
+     * Currently, the only URL parameter passed to this method is a single constant. The lint
+     * warning regarding this is suppressed since moving the constant into this method seems
+     * unnecessarily limiting.
+     */
+    private static String fetchPlainText(
+            @SuppressWarnings("SameParameterValue") URL url) throws IOException {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()

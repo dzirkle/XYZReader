@@ -19,7 +19,7 @@ public class ImageLoaderHelper {
     private static ImageLoaderHelper sInstance;
 
     private RequestQueue mRequestQueue;
-    private ImageLoader mImageLoader;
+    private final ImageLoader mImageLoader;
 
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
@@ -63,6 +63,13 @@ public class ImageLoaderHelper {
         return mRequestQueue;
     }
 
+    /*
+     * todo document
+     *
+     * Though this method is unused in the app currently, it is a reasonable part of this class's
+     * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
+     */
+    @SuppressWarnings("unused")
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }

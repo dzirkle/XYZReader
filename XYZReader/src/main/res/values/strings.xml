@@ -1,23 +1,12 @@
 <resources>
 
     <string name="app_name">XYZ Reader</string>
-    <string name="welcome_xyz_reader">Welcome to XYZ Reader!</string>
 
-    <string name="action_refresh">Refresh</string>
-    <string name="action_settings">Settings</string>
     <string name="action_share">Share</string>
-
-    <string name="up">Up</string>
 
     <!-- Content descriptions -->
     <string name="cd_article_list_item_thumbnail">Article thumbnail image</string>
     <string name="cd_article_detail_image">Article detail image</string>
-
-    <!-- Transition names -->
-    <string name="image_transition">image transition</string>
-
-    <!-- Details fragment options menu titles -->
-    <string name="title_navigate_up">navigate up</string>
 
     <!-- Error strings -->
     <string name="error_missing_details_fragment_args">Missing detail fragment arguments</string>

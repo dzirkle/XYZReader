@@ -44,7 +44,11 @@ public class SelectionBuilder {
 
     /**
      * Reset any internal state, allowing this builder to be recycled.
+     *
+     * Though this method is unused in the app currently, it is a reasonable part of this class's
+     * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
      */
+    @SuppressWarnings("unused")
     public SelectionBuilder reset() {
         mTable = null;
 		if (mProjectionMap != null) {
@@ -82,9 +86,7 @@ public class SelectionBuilder {
         mSelection.append("(").append(selection).append(")");
         if (selectionArgs != null) {
         	ensureSelectionArgs();
-            for (String arg : selectionArgs) {
-                mSelectionArgs.add(arg);
-            }
+            mSelectionArgs.addAll(Arrays.asList(selectionArgs));
         }
 
         return this;
@@ -103,7 +105,7 @@ public class SelectionBuilder {
 
     private void ensureProjectionMap() {
 		if (mProjectionMap == null) {
-			mProjectionMap = new HashMap<String, String>();
+			mProjectionMap = new HashMap<>();
 		}
     }
 
@@ -115,16 +117,30 @@ public class SelectionBuilder {
 
     private void ensureSelectionArgs() {
     	if (mSelectionArgs == null) {
-    		mSelectionArgs = new ArrayList<String>();
+    		mSelectionArgs = new ArrayList<>();
     	}
     }
 
+    /*
+     * todo document
+     *
+     * Though this method is unused in the app currently, it is a reasonable part of this class's
+     * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
+     */
+    @SuppressWarnings("unused")
     public SelectionBuilder mapToTable(String column, String table) {
     	ensureProjectionMap();
         mProjectionMap.put(column, table + "." + column);
         return this;
     }
 
+    /*
+     * todo document
+     *
+     * Though this method is unused in the app currently, it is a reasonable part of this class's
+     * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
+     */
+    @SuppressWarnings("unused")
     public SelectionBuilder map(String fromColumn, String toClause) {
     	ensureProjectionMap();
         mProjectionMap.put(fromColumn, toClause + " AS " + fromColumn);
@@ -134,8 +150,11 @@ public class SelectionBuilder {
     /**
      * Return selection string for current internal state.
      *
+     * The "weaker access" warning is suppressed as this is deemed a useful part of the interface.
+     *
      * @see #getSelectionArgs()
      */
+    @SuppressWarnings("WeakerAccess")
     public String getSelection() {
     	if (mSelection != null) {
             return mSelection.toString();
@@ -147,8 +166,11 @@ public class SelectionBuilder {
     /**
      * Return selection arguments for current internal state.
      *
+     * The "weaker access" warning is suppressed as this is deemed a useful part of the interface.
+     *
      * @see #getSelection()
      */
+    @SuppressWarnings("WeakerAccess")
     public String[] getSelectionArgs() {
     	if (mSelectionArgs != null) {
             return mSelectionArgs.toArray(new String[mSelectionArgs.size()]);
@@ -182,9 +204,13 @@ public class SelectionBuilder {
 
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
+     *
+     * The "weaker access" warning is suppressed as this is deemed a useful part of the interface.
+     *
      */
+    @SuppressWarnings("WeakerAccess")
     public Cursor query(SQLiteDatabase db, String[] columns, String groupBy,
-            String having, String orderBy, String limit) {
+                        String having, String orderBy, String limit) {
         assertTable();
         if (columns != null) mapColumns(columns);
         return db.query(mTable, columns, getSelection(), getSelectionArgs(), groupBy, having,

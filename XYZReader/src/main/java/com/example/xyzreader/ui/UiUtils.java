@@ -3,7 +3,7 @@ package com.example.xyzreader.ui;
 import android.app.Activity;
 import android.util.DisplayMetrics;
 
-public class UiUtils {
+class UiUtils {
     /**
      * Get the number of article list card columns to display
      *

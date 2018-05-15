@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.example.xyzreader.BuildConfig;
 import com.example.xyzreader.R;
@@ -41,7 +40,6 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private GridLayoutManager mLayoutManager;
 
     private boolean mIsRefreshing = false;
 
@@ -92,8 +90,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         // Create and configure the layout manager, then set it on the recycler view
         final int columnCount = UiUtils.getArticleListColumns(this);
-        mLayoutManager = new GridLayoutManager(this, columnCount);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, columnCount));
 
         // Create the the item spacing decoration and set it on the recycler view
         final GridItemSpacingDecoration itemDecoration =
@@ -116,12 +113,6 @@ public class ArticleListActivity extends AppCompatActivity implements
                 new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
     }
 
-    // todo document
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -132,7 +123,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         startService(new Intent(this, UpdaterService.class));
     }
 
-    private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
@@ -168,11 +159,10 @@ public class ArticleListActivity extends AppCompatActivity implements
     /**
      * Handle article list item clicks
      *
-     * @param position       clicked item adapter position
-     * @param transitionView shared element transition view
+     * @param position clicked item adapter position
      */
     @Override
-    public void onArticleClick(final int position, final View transitionView) {
+    public void onArticleClick(final int position) {
         // Create an intent to launch the details activity
         final Intent intent = new Intent(Intent.ACTION_VIEW,
                 ItemsContract.Items.buildItemUri(mRecyclerView.getAdapter().getItemId(position)));

@@ -15,23 +15,21 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.NetworkImageView;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.date.ArticleDateUtils;
 
-import timber.log.Timber;
-
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
     // Context
-    private Context mContext;
+    private final Context mContext;
 
     // Cursor
-    private Cursor mCursor;
+    private final Cursor mCursor;
 
     // Article click listener
-    private ArticleClickListener mArticleClickListener;
+    private final ArticleClickListener mArticleClickListener;
 
+    @SuppressWarnings("WeakerAccess")
     public ArticleAdapter(final Context context, final Cursor cursor,
                           final ArticleClickListener articleClickListener) {
         mContext = context;
@@ -67,16 +65,16 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
      * Article click listener interface
      */
     public interface ArticleClickListener {
-        void onArticleClick(final int position, final View transitionView);
+        void onArticleClick(final int position);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public ImageView thumbnailView;
-        public TextView titleView;
-        public TextView subtitleView;
+        final ImageView thumbnailView;
+        final TextView titleView;
+        final TextView subtitleView;
         private int mPosition;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
 
             // Set the click listener on the view
@@ -89,7 +87,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         }
 
         // todo document
-        public void bind(final Cursor cursor, final int position) {
+        void bind(final Cursor cursor, final int position) {
             // ...
             mPosition = position;
             cursor.moveToPosition(position);
@@ -99,6 +97,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             subtitleView.setText(Html.fromHtml(ArticleDateUtils.outputDateString(cursor)
                     + "<br/>" + " by " + cursor.getString(ArticleLoader.Query.AUTHOR)));
 
+            // todo clean up
             //-----
 //            ImageLoaderHelper.getInstance(mContext).getImageLoader().get(cursor.getString(
 //                    ArticleLoader.Query.THUMB_URL), new ImageLoader.ImageListener() {
@@ -132,12 +131,9 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Timber.d("dzdbg: onErrorResponse()");
-                    //log your error
+                    // todo log your error
                 }
             };
-
-            Timber.d("dzdbg: %s", cursor.getString(ArticleLoader.Query.THUMB_URL));
 
             // Create the image request
             ImageRequest getImageRequest = new ImageRequest(
@@ -154,7 +150,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         @Override
         public void onClick(View v) {
             // todo need to flesh out
-            mArticleClickListener.onArticleClick(mPosition, thumbnailView);
+            mArticleClickListener.onArticleClick(mPosition);
         }
     }
 }

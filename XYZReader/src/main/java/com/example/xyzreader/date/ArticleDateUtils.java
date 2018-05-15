@@ -38,12 +38,12 @@ public class ArticleDateUtils {
         }
     }
 
-    public static Date parsePublishedDate(final Cursor cursor) {
+    private static Date parsePublishedDate(final Cursor cursor) {
         try {
             String date = cursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
             return dateFormat.parse(date);
         } catch (ParseException ex) {
-            Timber.e(ex.getMessage());
+            Timber.e(ex);
             Timber.i("passing today's date");
             return new Date();
         }

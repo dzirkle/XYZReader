@@ -14,14 +14,20 @@ import android.view.View;
  *
  *     https://gist.github.com/yqritc/ccca77dc42f2364777e1
  */
-public class GridItemSpacingDecoration extends RecyclerView.ItemDecoration {
+class GridItemSpacingDecoration extends RecyclerView.ItemDecoration {
 
-    private int mItemSpacing;
+    private final int mItemSpacing;
 
+    /*
+     * This constructor is only used internally by the app currently, but is a reasonable part of
+     * the class interface. Thus, the "weaker access" lint warning is suppressed.
+     */
+    @SuppressWarnings("WeakerAccess")
     public GridItemSpacingDecoration(int itemSpacing) {
         mItemSpacing = itemSpacing;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public GridItemSpacingDecoration(final Context context, final int itemSpacingId) {
         this(context.getResources().getDimensionPixelOffset(itemSpacingId));
     }
