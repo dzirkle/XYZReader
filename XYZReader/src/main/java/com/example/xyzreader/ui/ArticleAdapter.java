@@ -19,6 +19,8 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.date.ArticleDateUtils;
 
+import timber.log.Timber;
+
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
     // Context
     private final Context mContext;
@@ -86,9 +88,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             subtitleView = view.findViewById(R.id.article_subtitle);
         }
 
-        // todo document
         void bind(final Cursor cursor, final int position) {
-            // ...
             mPosition = position;
             cursor.moveToPosition(position);
 
@@ -97,27 +97,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             subtitleView.setText(Html.fromHtml(ArticleDateUtils.outputDateString(cursor)
                     + "<br/>" + " by " + cursor.getString(ArticleLoader.Query.AUTHOR)));
 
-            // todo clean up
-            //-----
-//            ImageLoaderHelper.getInstance(mContext).getImageLoader().get(cursor.getString(
-//                    ArticleLoader.Query.THUMB_URL), new ImageLoader.ImageListener() {
-//                        @Override
-//                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-//                            Bitmap bitmap = imageContainer.getBitmap();
-//                            if (bitmap != null) {
-//                                thumbnailView.setImageBitmap(imageContainer.getBitmap());
-//                                mBindViewHolderPositionListener.onBindViewHolderPosition(position);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onErrorResponse(VolleyError volleyError) {
-//                            mBindViewHolderPositionListener.onBindViewHolderPosition(position);
-//                        }
-//                    });
-
-
-            //-----
             // Volley ImageRequest response listener
             Response.Listener<Bitmap> imageListener = new Response.Listener<Bitmap>() {
                 @Override
@@ -131,7 +110,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    // todo log your error
+                    Timber.e("Error retrieving article thumbnail image");
                 }
             };
 
@@ -149,7 +128,6 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
         @Override
         public void onClick(View v) {
-            // todo need to flesh out
             mArticleClickListener.onArticleClick(mPosition);
         }
     }

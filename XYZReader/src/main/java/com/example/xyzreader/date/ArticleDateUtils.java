@@ -25,7 +25,6 @@ public class ArticleDateUtils {
     private static final GregorianCalendar START_OF_EPOCH =
             new GregorianCalendar(2,1,1);
 
-    // todo document
     public static String outputDateString(final Cursor cursor) {
         final Date publishedDate = ArticleDateUtils.parsePublishedDate(cursor);
 

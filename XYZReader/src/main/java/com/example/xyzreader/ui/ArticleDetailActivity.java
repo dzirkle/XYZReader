@@ -17,6 +17,8 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 
+import timber.log.Timber;
+
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  *
@@ -75,19 +77,20 @@ public class ArticleDetailActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> cursorLoader, Cursor cursor) {
         mCursor = cursor;
+
+        // Notify the adapter that the data have changed
         mPagerAdapter.notifyDataSetChanged();
 
-        // Select the start ID
+        // Reset the cursor position to "before first"
+        mCursor.moveToPosition(-1);
+
+        // Set the current pager item in accordance with mStartId
         if (mStartId > 0) {
-            mCursor.moveToFirst();
-            // TODO: optimize
-            while (!mCursor.isAfterLast()) {
+            while (mCursor.moveToNext()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
-                    final int position = mCursor.getPosition();
-                    mPager.setCurrentItem(position, false);
+                    mPager.setCurrentItem(mCursor.getPosition(), false);
                     break;
                 }
-                mCursor.moveToNext();
             }
             mStartId = 0;
         }
@@ -108,7 +111,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             mCursor.moveToPosition(position);
 
-            // todo document
             return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
         }
 

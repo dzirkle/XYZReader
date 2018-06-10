@@ -5,13 +5,10 @@ import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-// todo document
-
 /**
- * Provide spacing for grid items
+ * Provide grid item spacing
  *
  * This class is based on code found here:
- *
  *     https://gist.github.com/yqritc/ccca77dc42f2364777e1
  */
 class GridItemSpacingDecoration extends RecyclerView.ItemDecoration {

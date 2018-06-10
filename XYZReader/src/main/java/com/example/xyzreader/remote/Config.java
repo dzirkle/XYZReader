@@ -9,12 +9,13 @@ class Config {
     public static final URL BASE_URL;
 
     static {
-        URL url = null;
+        final String BASE_URL_STRING = "https://go.udacity.com/xyz-reader-json";
+        URL url;
         try {
-            url = new URL("https://go.udacity.com/xyz-reader-json" );
-        } catch (MalformedURLException ignored) {
-            // TODO: throw a real error
-            Timber.e("Please check your internet connection.");
+            url = new URL(BASE_URL_STRING);
+        } catch (MalformedURLException mue) {
+            Timber.e("Malformed URL: %s", BASE_URL_STRING);
+            throw new ExceptionInInitializerError(mue);
         }
 
         BASE_URL = url;

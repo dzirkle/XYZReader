@@ -11,7 +11,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 /**
- * todo document
  * https://developer.android.com/training/volley/requestqueue
  */
 public class ImageLoaderHelper {
@@ -64,8 +63,6 @@ public class ImageLoaderHelper {
     }
 
     /*
-     * todo document
-     *
      * Though this method is unused in the app currently, it is a reasonable part of this class's
      * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
      */

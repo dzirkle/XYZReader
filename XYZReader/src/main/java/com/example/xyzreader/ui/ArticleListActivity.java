@@ -27,13 +27,7 @@ import java.io.IOException;
 import timber.log.Timber;
 
 /**
- * An activity representing a list of Articles. This activity has different presentations for
- * handset and tablet-size devices. On handsets, the activity presents a list of items, which when
- * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
- * activity presents a grid of items as cards.
- *
- * The shared element transition approach is based on Alex Lockwood's work here:
- *     https://github.com/alexjlockwood/adp-activity-transitions
+ * An activity representing a list of Articles.
  */
 public class ArticleListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, ArticleAdapter.ArticleClickListener {
@@ -60,19 +54,18 @@ public class ArticleListActivity extends AppCompatActivity implements
         // Set the toolbar as the action bar
         setSupportActionBar(toolbar);
 
-        // Whitelist this app's PID for logcat
-        // todo remove when debugged
-        try {
-            int pid = android.os.Process.myPid();
-            String whiteList = "logcat -P '" + pid + "'";
-            Runtime.getRuntime().exec(whiteList).waitFor();
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
-
-        // Set up Timber. This app won't be released, so only debug build configs are supported.
+        // Configure logging for debug builds
         if (BuildConfig.DEBUG) {
-            // Use the default Timber DebugTree for debug builds
+            // Whitelist this app's PID for logcat so duplicate messages won't be eliminated, etc.
+            try {
+                int pid = android.os.Process.myPid();
+                String whiteList = "logcat -P '" + pid + "'";
+                Runtime.getRuntime().exec(whiteList).waitFor();
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+            }
+
+            // Set up Timber using the default DebugTree
             Timber.plant(new Timber.DebugTree() {
                 // Override createStackElementTag in order to add the line number to the tag
                 @Override

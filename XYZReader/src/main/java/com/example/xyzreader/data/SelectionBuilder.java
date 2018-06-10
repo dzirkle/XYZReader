@@ -122,8 +122,6 @@ public class SelectionBuilder {
     }
 
     /*
-     * todo document
-     *
      * Though this method is unused in the app currently, it is a reasonable part of this class's
      * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
      */
@@ -135,8 +133,6 @@ public class SelectionBuilder {
     }
 
     /*
-     * todo document
-     *
      * Though this method is unused in the app currently, it is a reasonable part of this class's
      * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
      */

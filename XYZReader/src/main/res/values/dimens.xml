@@ -1,16 +1,13 @@
 <resources>
-    <!-- detail -->
-    <dimen name="detail_title_text_size">32sp</dimen>
-    <dimen name="detail_body_text_size">22sp</dimen>
-    <!-- todo fix -->
-    <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
-    <dimen name="detail_body_top_padding">32dp</dimen>
-
     <!-- Detail view dimensions -->
     <dimen name="detail_image_height">250dp</dimen>
     <dimen name="detail_metabar_vert_padding">16dp</dimen>
     <dimen name="detail_metabar_title_bottom_padding">4dp</dimen>
+    <dimen name="detail_title_text_size">32sp</dimen>
+    <dimen name="detail_body_top_padding">32dp</dimen>
     <dimen name="detail_body_max_width">450dp</dimen>
+    <dimen name="detail_body_text_size">22sp</dimen>
+    <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
     <dimen name="detail_body_bottom_margin">88dp</dimen>
 
     <!-- FAB -->

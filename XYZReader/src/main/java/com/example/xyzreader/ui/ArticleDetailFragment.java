@@ -30,10 +30,7 @@ import com.example.xyzreader.date.ArticleDateUtils;
 import timber.log.Timber;
 
 /**
- * todo verify
- * A fragment representing a single Article detail screen. This fragment is either contained in a
- * {@link ArticleListActivity} in two-pane mode (on tablets) or a {@link ArticleDetailActivity} on
- * handsets.
+ * A fragment representing a single Article detail screen.
  */
 public class ArticleDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -85,10 +82,8 @@ public class ArticleDetailFragment extends Fragment implements
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        // todo document
         final Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
 
-        // todo document
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
