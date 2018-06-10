@@ -17,8 +17,6 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 
-import timber.log.Timber;
-
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  *
