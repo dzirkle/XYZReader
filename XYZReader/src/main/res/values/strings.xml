@@ -17,6 +17,9 @@
     <string name="error_table_not_specified">"Table not specified"</string>
     <string name="error_invalid_parsed_item_array">"Invalid parsed item array"</string>
     <string name="error_updating_content">"Error updating content."</string>
+    <string name="error_fetching_items_json">"Error fetching items JSON"</string>
+    <string name="error_expected_json_array">"Expected JSONArray"</string>
+    <string name="error_parsing_items_json">"Error parsing items JSON"</string>
 
     <!-- Warning strings -->
     <string name="warning_offline">"Not online, not refreshing."</string>

@@ -1,5 +1,9 @@
 package com.example.xyzreader.remote;
 
+import android.content.Context;
+
+import com.example.xyzreader.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -16,25 +20,25 @@ public class RemoteEndpointUtil {
     private RemoteEndpointUtil() {
     }
 
-    public static JSONArray fetchJsonArray() {
+    public static JSONArray fetchJsonArray(final Context context) {
         String itemsJson;
         try {
             itemsJson = fetchPlainText(Config.BASE_URL);
-        } catch (IOException e) {
-            Timber.e(e, "Error fetching items JSON");
+        } catch (final IOException e) {
+            Timber.e(e, context.getString(R.string.error_fetching_items_json));
             return null;
         }
 
         // Parse JSON
         try {
-            JSONTokener tokener = new JSONTokener(itemsJson);
-            Object val = tokener.nextValue();
+            final JSONTokener tokener = new JSONTokener(itemsJson);
+            final Object val = tokener.nextValue();
             if (!(val instanceof JSONArray)) {
-                throw new JSONException("Expected JSONArray");
+                throw new JSONException(context.getString(R.string.error_expected_json_array));
             }
             return (JSONArray) val;
-        } catch (JSONException e) {
-            Timber.e(e, "Error parsing items JSON");
+        } catch (final JSONException e) {
+            Timber.e(e, context.getString(R.string.error_parsing_items_json));
         }
 
         return null;
@@ -46,14 +50,14 @@ public class RemoteEndpointUtil {
      * unnecessarily limiting.
      */
     private static String fetchPlainText(
-            @SuppressWarnings("SameParameterValue") URL url) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+            @SuppressWarnings("SameParameterValue") final URL url) throws IOException {
+        final OkHttpClient client = new OkHttpClient();
 
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        Response response = client.newCall(request).execute();
+        final Response response = client.newCall(request).execute();
         return response.body().string();
     }
 }

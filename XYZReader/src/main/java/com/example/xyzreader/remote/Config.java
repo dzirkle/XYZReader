@@ -13,8 +13,8 @@ class Config {
         URL url;
         try {
             url = new URL(BASE_URL_STRING);
-        } catch (MalformedURLException mue) {
-            Timber.e("Malformed URL: %s", BASE_URL_STRING);
+        } catch (final MalformedURLException mue) {
+            Timber.e(mue, BASE_URL_STRING);
             throw new ExceptionInInitializerError(mue);
         }
 
