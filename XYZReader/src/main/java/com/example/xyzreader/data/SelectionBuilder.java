@@ -27,9 +27,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+
+import com.example.xyzreader.R;
 
 /**
  * Helper for building selection clauses for {@link SQLiteDatabase}. Each
@@ -37,10 +40,15 @@ import android.text.TextUtils;
  * thread safe.
  */
 public class SelectionBuilder {
+    private final Context mContext;
     private String mTable = null;
     private HashMap<String, String> mProjectionMap;
     private StringBuilder mSelection;
     private ArrayList<String> mSelectionArgs;
+
+    SelectionBuilder(final Context context) {
+        mContext = context;
+    }
 
     /**
      * Reset any internal state, allowing this builder to be recycled.
@@ -67,11 +75,11 @@ public class SelectionBuilder {
      * Append the given selection clause to the internal state. Each clause is
      * surrounded with parenthesis and combined using {@code AND}.
      */
-    public SelectionBuilder where(String selection, String... selectionArgs) {
+    public SelectionBuilder where(final String selection, final String... selectionArgs) {
         if (TextUtils.isEmpty(selection)) {
             if (selectionArgs != null && selectionArgs.length > 0) {
                 throw new IllegalArgumentException(
-                        "Valid selection required when including arguments=");
+                        mContext.getString(R.string.error_invalid_selection));
             }
 
             // Shortcut when clause is empty
@@ -92,14 +100,14 @@ public class SelectionBuilder {
         return this;
     }
 
-    public SelectionBuilder table(String table) {
+    public SelectionBuilder table(final String table) {
         mTable = table;
         return this;
     }
 
     private void assertTable() {
         if (mTable == null) {
-            throw new IllegalStateException("Table not specified");
+            throw new IllegalStateException(mContext.getString(R.string.error_table_not_specified));
         }
     }
 
@@ -109,7 +117,7 @@ public class SelectionBuilder {
 		}
     }
 
-    private void ensureSelection(int lengthHint) {
+    private void ensureSelection(final int lengthHint) {
     	if (mSelection == null) {
     		mSelection = new StringBuilder(lengthHint + 8);
     	}
@@ -126,7 +134,7 @@ public class SelectionBuilder {
      * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
      */
     @SuppressWarnings("unused")
-    public SelectionBuilder mapToTable(String column, String table) {
+    public SelectionBuilder mapToTable(final String column, final String table) {
     	ensureProjectionMap();
         mProjectionMap.put(column, table + "." + column);
         return this;
@@ -137,7 +145,7 @@ public class SelectionBuilder {
      * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
      */
     @SuppressWarnings("unused")
-    public SelectionBuilder map(String fromColumn, String toClause) {
+    public SelectionBuilder map(final String fromColumn, final String toClause) {
     	ensureProjectionMap();
         mProjectionMap.put(fromColumn, toClause + " AS " + fromColumn);
         return this;
@@ -175,7 +183,7 @@ public class SelectionBuilder {
     	}
     }
 
-    private void mapColumns(String[] columns) {
+    private void mapColumns(final String[] columns) {
     	if (mProjectionMap == null) return;
         for (int i = 0; i < columns.length; i++) {
             final String target = mProjectionMap.get(columns[i]);
@@ -194,7 +202,7 @@ public class SelectionBuilder {
     /**
      * Execute query using the current internal state as {@code WHERE} clause.
      */
-    public Cursor query(SQLiteDatabase db, String[] columns, String orderBy) {
+    public Cursor query(final SQLiteDatabase db, final String[] columns, final String orderBy) {
         return query(db, columns, null, null, orderBy, null);
     }
 
@@ -205,8 +213,8 @@ public class SelectionBuilder {
      *
      */
     @SuppressWarnings("WeakerAccess")
-    public Cursor query(SQLiteDatabase db, String[] columns, String groupBy,
-                        String having, String orderBy, String limit) {
+    public Cursor query(final SQLiteDatabase db, final String[] columns, final String groupBy,
+                        final String having, final String orderBy, final String limit) {
         assertTable();
         if (columns != null) mapColumns(columns);
         return db.query(mTable, columns, getSelection(), getSelectionArgs(), groupBy, having,
@@ -216,7 +224,7 @@ public class SelectionBuilder {
     /**
      * Execute update using the current internal state as {@code WHERE} clause.
      */
-    public int update(SQLiteDatabase db, ContentValues values) {
+    public int update(final SQLiteDatabase db, final ContentValues values) {
         assertTable();
         return db.update(mTable, values, getSelection(), getSelectionArgs());
     }
@@ -224,7 +232,7 @@ public class SelectionBuilder {
     /**
      * Execute delete using the current internal state as {@code WHERE} clause.
      */
-    public int delete(SQLiteDatabase db) {
+    public int delete(final SQLiteDatabase db) {
         assertTable();
         return db.delete(mTable, getSelection(), getSelectionArgs());
     }

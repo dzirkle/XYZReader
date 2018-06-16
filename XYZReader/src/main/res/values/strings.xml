@@ -10,5 +10,15 @@
 
     <!-- Error strings -->
     <string name="error_missing_details_fragment_args">Missing detail fragment arguments</string>
+    <string name="error_unknown_uri">"Unknown uri: "</string>
+    <string name="error_invalid_selection">
+        "Valid selection required when including arguments="
+    </string>
+    <string name="error_table_not_specified">"Table not specified"</string>
+    <string name="error_invalid_parsed_item_array">"Invalid parsed item array"</string>
+    <string name="error_updating_content">"Error updating content."</string>
+
+    <!-- Warning strings -->
+    <string name="warning_offline">"Not online, not refreshing."</string>
 
 </resources>

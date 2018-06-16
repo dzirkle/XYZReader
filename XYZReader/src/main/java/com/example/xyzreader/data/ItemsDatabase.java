@@ -11,12 +11,12 @@ class ItemsDatabase extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
 
     @SuppressWarnings("WeakerAccess")
-    public ItemsDatabase(Context context) {
+    public ItemsDatabase(final Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(final SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + Tables.ITEMS + " ("
                 + ItemsContract.ItemsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + ItemsContract.ItemsColumns.SERVER_ID + " TEXT,"
@@ -31,7 +31,7 @@ class ItemsDatabase extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + Tables.ITEMS);
         onCreate(db);
     }
