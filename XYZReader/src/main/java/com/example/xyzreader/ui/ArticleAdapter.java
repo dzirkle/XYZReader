@@ -94,7 +94,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
 
             titleView.setText(cursor.getString(ArticleLoader.Query.TITLE));
 
-            subtitleView.setText(Html.fromHtml(ArticleDateUtils.outputDateString(cursor)
+            subtitleView.setText(Html.fromHtml(
+                    ArticleDateUtils.outputDateString(mContext, cursor)
                     + "<br/>" + " by " + cursor.getString(ArticleLoader.Query.AUTHOR)));
 
             // Volley ImageRequest response listener

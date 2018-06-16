@@ -141,7 +141,7 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.animate().alpha(1);
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 
-            bylineView.setText(Html.fromHtml(ArticleDateUtils.outputDateString(mCursor)
+            bylineView.setText(Html.fromHtml(ArticleDateUtils.outputDateString(mActivity, mCursor)
                     + " by <font color='#ffffff'>" + mCursor.getString(ArticleLoader.Query.AUTHOR)
                     + "</font>"));
 

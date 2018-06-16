@@ -1,8 +1,10 @@
 package com.example.xyzreader.date;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.text.format.DateUtils;
 
+import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 
 import java.text.DateFormat;
@@ -25,8 +27,8 @@ public class ArticleDateUtils {
     private static final GregorianCalendar START_OF_EPOCH =
             new GregorianCalendar(2,1,1);
 
-    public static String outputDateString(final Cursor cursor) {
-        final Date publishedDate = ArticleDateUtils.parsePublishedDate(cursor);
+    public static String outputDateString(final Context context, final Cursor cursor) {
+        final Date publishedDate = ArticleDateUtils.parsePublishedDate(context, cursor);
 
         if (!publishedDate.before(ArticleDateUtils.START_OF_EPOCH.getTime())) {
             return DateUtils.getRelativeTimeSpanString(
@@ -37,13 +39,13 @@ public class ArticleDateUtils {
         }
     }
 
-    private static Date parsePublishedDate(final Cursor cursor) {
+    private static Date parsePublishedDate(final Context context, final Cursor cursor) {
         try {
-            String date = cursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
+            final String date = cursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
             return dateFormat.parse(date);
         } catch (ParseException ex) {
             Timber.e(ex);
-            Timber.i("passing today's date");
+            Timber.i(context.getString(R.string.info_passing_today_as_date));
             return new Date();
         }
     }
