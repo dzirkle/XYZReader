@@ -52,7 +52,7 @@ public class ArticleDetailFragment extends Fragment implements
     public ArticleDetailFragment() {
     }
 
-    public static ArticleDetailFragment newInstance(long itemId) {
+    public static ArticleDetailFragment newInstance(final long itemId) {
         Bundle arguments = new Bundle();
         arguments.putLong(ARG_ITEM_ID, itemId);
 
@@ -62,7 +62,7 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Get the arguments
@@ -78,8 +78,8 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
         final Toolbar toolbar = mRootView.findViewById(R.id.toolbar);
@@ -96,10 +96,9 @@ public class ArticleDetailFragment extends Fragment implements
         // Set the share FAB click listener
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(mActivity)
                         .setType("text/plain")
-                        .setText("Some sample text")
                         .getIntent(), getString(R.string.action_share)));
             }
         });
@@ -110,7 +109,7 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         // Cache the associated activity
@@ -133,50 +132,52 @@ public class ArticleDetailFragment extends Fragment implements
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = mRootView.findViewById(R.id.article_body);
 
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
+        bodyView.setTypeface(Typeface.createFromAsset(
+                getResources().getAssets(), "Rosario-Regular.ttf"));
 
         if (mCursor != null) {
-            mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
-            mRootView.animate().alpha(1);
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 
-            bylineView.setText(Html.fromHtml(ArticleDateUtils.outputDateString(mActivity, mCursor)
+            bylineView.setText(Html.fromHtml(
+                    ArticleDateUtils.outputDateString(mActivity, mCursor)
                     + " by <font color='#ffffff'>" + mCursor.getString(ArticleLoader.Query.AUTHOR)
                     + "</font>"));
 
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            bodyView.setText(Html.fromHtml(
+                    mCursor.getString(ArticleLoader.Query.BODY).replaceAll(
+                            "(\r\n|\n)", "<br />")));
+
             ImageLoaderHelper.getInstance(mActivity).getImageLoader()
-                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL),
+                            new ImageLoader.ImageListener() {
                         @Override
-                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                            Bitmap bitmap = imageContainer.getBitmap();
+                        public void onResponse(final ImageLoader.ImageContainer imageContainer,
+                                               final boolean b) {
+                            final Bitmap bitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
                             }
                         }
 
                         @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-
+                        public void onErrorResponse(final VolleyError volleyError) {
+                            Timber.e(mActivity.getString(R.string.error_getting_article_image));
                         }
                     });
         } else {
             mRootView.setVisibility(View.GONE);
-            titleView.setText("N/A");
-            bylineView.setText("N/A" );
-            bodyView.setText("N/A");
         }
     }
 
     @NonNull
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(final int i, final Bundle bundle) {
         return ArticleLoader.newInstanceForItemId(mActivity, mItemId);
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(@NonNull final Loader<Cursor> cursorLoader, final Cursor cursor) {
         if (!isAdded()) {
             if (cursor != null) {
                 cursor.close();
@@ -186,7 +187,7 @@ public class ArticleDetailFragment extends Fragment implements
 
         mCursor = cursor;
         if (mCursor != null && !mCursor.moveToFirst()) {
-            Timber.e("Error reading item detail cursor");
+            Timber.e(mActivity.getString(R.string.error_reading_item_detail_cursor));
             mCursor.close();
             mCursor = null;
         }
@@ -195,7 +196,7 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(@NonNull final Loader<Cursor> cursorLoader) {
         mCursor = null;
         bindViews();
     }

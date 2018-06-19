@@ -40,21 +40,21 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         mCursor.moveToPosition(position);
         return mCursor.getLong(ArticleLoader.Query._ID);
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final View view = inflater.inflate(R.layout.list_item_article, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.bind(mCursor, position);
     }
 
@@ -76,7 +76,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         final TextView subtitleView;
         private int mPosition;
 
-        ViewHolder(View view) {
+        ViewHolder(final View view) {
             super(view);
 
             // Set the click listener on the view
@@ -101,22 +101,21 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             // Volley ImageRequest response listener
             Response.Listener<Bitmap> imageListener = new Response.Listener<Bitmap>() {
                 @Override
-                public void onResponse(Bitmap response) {
-                    //This call back method is executed in the UI-Thread, when the loading is finished
-                    thumbnailView.setImageBitmap(response); //example
+                public void onResponse(final Bitmap response) {
+                    thumbnailView.setImageBitmap(response);
                 }
             };
 
             // Volley ImageRequest error listener
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Timber.e("Error retrieving article thumbnail image");
+                public void onErrorResponse(final VolleyError error) {
+                    Timber.e(mContext.getString(R.string.error_getting_article_thumbnail));
                 }
             };
 
             // Create the image request
-            ImageRequest getImageRequest = new ImageRequest(
+            final ImageRequest getImageRequest = new ImageRequest(
                     cursor.getString(ArticleLoader.Query.THUMB_URL),
                     imageListener, 0, 0, null, errorListener);
 
@@ -128,7 +127,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         }
 
         @Override
-        public void onClick(View v) {
+        public void onClick(final View v) {
             mArticleClickListener.onArticleClick(mPosition);
         }
     }

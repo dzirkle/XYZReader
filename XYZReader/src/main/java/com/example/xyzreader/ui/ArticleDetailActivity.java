@@ -19,9 +19,6 @@ import com.example.xyzreader.data.ItemsContract;
 
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
- *
- * The shared element transition approach is based on Alex Lockwood's work here:
- *     https://github.com/alexjlockwood/adp-activity-transitions
  */
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -33,11 +30,8 @@ public class ArticleDetailActivity extends AppCompatActivity
     private MyPagerAdapter mPagerAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Postpone the shared element transition until the fragment is ready to be drawn
-        postponeEnterTransition();
 
         setContentView(R.layout.activity_article_detail);
 
@@ -52,7 +46,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 if (mCursor != null) {
                     mCursor.moveToPosition(position);
                 }
@@ -68,12 +62,12 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @NonNull
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(final int i, final Bundle bundle) {
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(@NonNull final Loader<Cursor> cursorLoader, final Cursor cursor) {
         mCursor = cursor;
 
         // Notify the adapter that the data have changed
@@ -95,18 +89,18 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(@NonNull final Loader<Cursor> cursorLoader) {
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
     }
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
-        MyPagerAdapter(FragmentManager fm) {
+        MyPagerAdapter(final FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(final int position) {
             mCursor.moveToPosition(position);
 
             return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));

@@ -20,7 +20,7 @@ class GridItemSpacingDecoration extends RecyclerView.ItemDecoration {
      * the class interface. Thus, the "weaker access" lint warning is suppressed.
      */
     @SuppressWarnings("WeakerAccess")
-    public GridItemSpacingDecoration(int itemSpacing) {
+    public GridItemSpacingDecoration(final int itemSpacing) {
         mItemSpacing = itemSpacing;
     }
 

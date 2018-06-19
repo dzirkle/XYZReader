@@ -20,6 +20,11 @@
     <string name="error_fetching_items_json">"Error fetching items JSON"</string>
     <string name="error_expected_json_array">"Expected JSONArray"</string>
     <string name="error_parsing_items_json">"Error parsing items JSON"</string>
+    <string name="error_getting_article_thumbnail">
+        "Error retrieving article thumbnail image"
+    </string>
+    <string name="error_getting_article_image">"Error retrieving article image"</string>
+    <string name="error_reading_item_detail_cursor">"Error reading item detail cursor"</string>
 
     <!-- Warning strings -->
     <string name="warning_offline">"Not online, not refreshing."</string>

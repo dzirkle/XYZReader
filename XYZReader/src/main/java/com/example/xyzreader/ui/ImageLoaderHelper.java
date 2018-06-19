@@ -11,7 +11,10 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 /**
- * https://developer.android.com/training/volley/requestqueue
+ * Volley image loader helper
+ *
+ * This code is based on:
+ *     https://developer.android.com/training/volley/requestqueue
  */
 public class ImageLoaderHelper {
     @SuppressLint("StaticFieldLeak")
@@ -23,29 +26,29 @@ public class ImageLoaderHelper {
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
-    private ImageLoaderHelper(Context context) {
+    private ImageLoaderHelper(final Context context) {
         mContext = context;
         mRequestQueue = getRequestQueue();
 
         mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
 
-            private final LruCache<String, Bitmap> cache = new LruCache<>(20);
+            private final int LRU_CACHE_MAX_SIZE = 20;
+
+            private final LruCache<String, Bitmap> cache = new LruCache<>(LRU_CACHE_MAX_SIZE);
 
             @Override
-            public Bitmap getBitmap(String url) {
+            public Bitmap getBitmap(final String url) {
                 return cache.get(url);
             }
 
             @Override
-            public void putBitmap(String url, Bitmap value) {
+            public void putBitmap(final String url, final Bitmap value) {
                 cache.put(url, value);
             }
-
-
         });
     }
 
-    public static synchronized ImageLoaderHelper getInstance(Context context) {
+    public static synchronized ImageLoaderHelper getInstance(final Context context) {
         if (sInstance == null) {
             sInstance = new ImageLoaderHelper(context);
         }
@@ -67,7 +70,7 @@ public class ImageLoaderHelper {
      * interface. Thus, the method is retained and the "unused" lint warning is suppressed.
      */
     @SuppressWarnings("unused")
-    public <T> void addToRequestQueue(Request<T> req) {
+    public <T> void addToRequestQueue(final Request<T> req) {
         getRequestQueue().add(req);
     }
 

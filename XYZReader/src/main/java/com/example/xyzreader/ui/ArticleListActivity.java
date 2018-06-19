@@ -38,7 +38,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     private boolean mIsRefreshing = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
@@ -118,9 +118,10 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private final BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(final Context context, final Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
-                mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
+                mIsRefreshing = intent.getBooleanExtra(
+                        UpdaterService.EXTRA_REFRESHING, false);
                 updateRefreshingUI();
             }
         }
@@ -132,20 +133,21 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @NonNull
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(final int i, final Bundle bundle) {
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(@NonNull final Loader<Cursor> cursorLoader, final Cursor cursor) {
         // Create and configure the article adapter, then set it on the recycler view
-        final ArticleAdapter articleAdapter = new ArticleAdapter(this, cursor, this);
+        final ArticleAdapter articleAdapter =
+                new ArticleAdapter(this, cursor, this);
         articleAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(articleAdapter);
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull final Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
     }
 
@@ -161,5 +163,4 @@ public class ArticleListActivity extends AppCompatActivity implements
                 ItemsContract.Items.buildItemUri(mRecyclerView.getAdapter().getItemId(position)));
         startActivity(intent);
     }
-
 }
