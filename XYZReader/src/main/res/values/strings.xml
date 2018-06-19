@@ -1,5 +1,4 @@
 <resources>
-
     <string name="app_name">XYZ Reader</string>
 
     <string name="action_share">Share</string>
@@ -31,5 +30,4 @@
 
     <!-- Info strings -->
     <string name="info_passing_today_as_date">"passing today's date"</string>
-
 </resources>

@@ -16,8 +16,6 @@
 -->
 
 <resources>
-    <color name="photo_placeholder">#ccc</color>
-
     <!-- Base application colors -->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
@@ -28,4 +26,7 @@
 
     <!-- Details fragment colors -->
     <color name="colorByline">#8fff</color>
+
+    <!-- Other colors -->
+    <color name="colorPhotoPlaceholder">#ccc</color>
 </resources>

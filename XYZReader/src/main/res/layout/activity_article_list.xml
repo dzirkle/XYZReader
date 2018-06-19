@@ -47,7 +47,7 @@
             android:layout_height="match_parent"
             android:padding="@dimen/grid_item_spacing"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:background="@color/photo_placeholder"/>
+            android:background="@color/colorPhotoPlaceholder"/>
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
