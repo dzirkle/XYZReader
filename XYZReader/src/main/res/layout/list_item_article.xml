@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/article_list_item"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="@dimen/article_list_item_height"
     android:orientation="horizontal"
-    android:background="#FFFFFF">
+    android:background="@color/colorArticleListItemBackground">
 
     <!-- Article thumbnail -->
     <ImageView
@@ -30,9 +30,9 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
+            android:paddingLeft="@dimen/article_list_item_title_padding"
+            android:paddingRight="@dimen/article_list_item_title_padding"
+            android:paddingTop="@dimen/article_list_item_title_padding"
             android:textStyle="bold"
             android:ellipsize="end"
             android:maxLines="2" />
@@ -43,9 +43,9 @@
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingTop="@dimen/article_list_item_subtitle_padding_top"
+            android:paddingLeft="@dimen/article_list_item_subtitle_padding_horiz"
+            android:paddingRight="@dimen/article_list_item_subtitle_padding_horiz"
             android:maxLines="2"
             android:ellipsize="end" />
 

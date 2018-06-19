@@ -1,4 +1,10 @@
 <resources>
+    <!-- Article list item dimensions -->
+    <dimen name="article_list_item_height">100dp</dimen>
+    <dimen name="article_list_item_title_padding">8dp</dimen>
+    <dimen name="article_list_item_subtitle_padding_top">4dp</dimen>
+    <dimen name="article_list_item_subtitle_padding_horiz">8dp</dimen>
+
     <!-- Detail view dimensions -->
     <dimen name="detail_image_height">250dp</dimen>
     <dimen name="detail_metabar_vert_padding">16dp</dimen>
@@ -9,6 +15,7 @@
     <dimen name="detail_body_text_size">22sp</dimen>
     <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
     <dimen name="detail_body_bottom_margin">88dp</dimen>
+    <dimen name="detail_body_horiz_padding">16dp</dimen>
 
     <!-- FAB -->
     <dimen name="fab_margin">16dp</dimen>

@@ -1,3 +1,4 @@
+<!-- Article detail fragment layout -->
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -5,19 +6,19 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <!-- App bar -->
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
+        <!-- Collapsing toolbar -->
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
+            app:layout_scrollFlags="scroll|enterAlways" >
 
             <!-- Collapsible portion of the layout -->
             <LinearLayout
@@ -85,7 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:textColor="#8fff" />
+                        android:textColor="@color/colorByline" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -109,8 +110,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:maxWidth="@dimen/detail_body_max_width"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:paddingStart="@dimen/detail_body_horiz_padding"
+            android:paddingEnd="@dimen/detail_body_horiz_padding"
             android:paddingBottom="@dimen/detail_body_bottom_margin"
             android:paddingTop="@dimen/detail_body_top_padding"
             android:textColorLink="@color/colorAccent"

@@ -22,4 +22,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- Article list item colors -->
+    <color name="colorArticleListItemBackground">#FFFFFF</color>
+
+    <!-- Details fragment colors -->
+    <color name="colorByline">#8fff</color>
 </resources>
