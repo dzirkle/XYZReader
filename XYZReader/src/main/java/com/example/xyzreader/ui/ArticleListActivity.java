@@ -112,6 +112,8 @@ public class ArticleListActivity extends AppCompatActivity implements
         unregisterReceiver(mRefreshingReceiver);
     }
 
+    // todo: preserve/restore RV scroll position on configuration change
+
     private void startUpdaterService() {
         startService(new Intent(this, UpdaterService.class));
     }

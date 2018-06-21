@@ -7,6 +7,7 @@
     android:fitsSystemWindows="true">
 
     <!-- App bar -->
+    <!-- todo: Specify app bar elevation -->
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
@@ -123,6 +124,7 @@
     </android.support.v4.widget.NestedScrollView>
 
     <!-- Share FAB -->
+    <!-- todo: Specify FAB elevation -->
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/share_fab"
         android:layout_width="wrap_content"
