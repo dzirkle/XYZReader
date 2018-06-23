@@ -24,6 +24,7 @@
     </string>
     <string name="error_getting_article_image">"Error retrieving article image"</string>
     <string name="error_reading_item_detail_cursor">"Error reading item detail cursor"</string>
+    <string name="error_missing_state_scroll_position">Missing scroll position state</string>
 
     <!-- Warning strings -->
     <string name="warning_offline">"Not online, not refreshing."</string>

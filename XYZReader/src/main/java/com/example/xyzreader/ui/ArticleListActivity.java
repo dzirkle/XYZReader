@@ -32,10 +32,17 @@ import timber.log.Timber;
 public class ArticleListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, ArticleAdapter.ArticleClickListener {
 
+    private static final String KEY_SCROLL_POSITION_STATE =
+            "com.example.xyzreader.ui.ArticleListActivity.scrollPositionStateKey";
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
     private boolean mIsRefreshing = false;
+    private GridLayoutManager mLayoutManager;
+
+    // Recycler view scroll position
+    private int mScrollPosition = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -83,12 +90,22 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         // Create and configure the layout manager, then set it on the recycler view
         final int columnCount = UiUtils.getArticleListColumns(this);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, columnCount));
+        mLayoutManager = new GridLayoutManager(this, columnCount);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
         // Create the the item spacing decoration and set it on the recycler view
         final GridItemSpacingDecoration itemDecoration =
                 new GridItemSpacingDecoration(this, R.dimen.grid_item_spacing);
         mRecyclerView.addItemDecoration(itemDecoration);
+
+        if (savedInstanceState != null) {
+          if (savedInstanceState.containsKey(KEY_SCROLL_POSITION_STATE)) {
+              mScrollPosition = savedInstanceState.getInt(KEY_SCROLL_POSITION_STATE);
+          } else {
+              throw new IllegalArgumentException(
+                      getString(R.string.error_missing_state_scroll_position));
+          }
+        }
 
         // Initiate the data load
         getSupportLoaderManager().initLoader(0, null, this);
@@ -112,7 +129,12 @@ public class ArticleListActivity extends AppCompatActivity implements
         unregisterReceiver(mRefreshingReceiver);
     }
 
-    // todo: preserve/restore RV scroll position on configuration change
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        // Save the recycler view scroll position
+        outState.putInt(KEY_SCROLL_POSITION_STATE, mLayoutManager.findFirstVisibleItemPosition());
+        super.onSaveInstanceState(outState);
+    }
 
     private void startUpdaterService() {
         startService(new Intent(this, UpdaterService.class));
@@ -146,6 +168,9 @@ public class ArticleListActivity extends AppCompatActivity implements
                 new ArticleAdapter(this, cursor, this);
         articleAdapter.setHasStableIds(true);
         mRecyclerView.setAdapter(articleAdapter);
+
+        // Scroll the recycler view to the appropriate position
+        mLayoutManager.scrollToPosition(Math.min(mScrollPosition, articleAdapter.getItemCount()));
     }
 
     @Override
