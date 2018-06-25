@@ -24,6 +24,9 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="fab_elevation_resting">6dp</dimen>
 
+    <!-- Cards -->
+    <dimen name="card_resting_elevation">1dp</dimen>
+
     <!-- Grid item spacing -->
     <dimen name="grid_item_spacing">4dp</dimen>
 
