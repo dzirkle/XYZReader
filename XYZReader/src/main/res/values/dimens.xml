@@ -17,11 +17,8 @@
     <dimen name="detail_body_bottom_margin">88dp</dimen>
     <dimen name="detail_body_horiz_padding">16dp</dimen>
 
-    <!-- App bar
-        Both app bars are part of collapsing toolbar layouts, so the elevation is set to 0 since
-        the other surfaces will slide over the app bar as it collapses
-    -->
-    <dimen name="app_bar_elevation">0dp</dimen>
+    <!-- App bar -->
+    <dimen name="app_bar_elevation">4dp</dimen>
 
     <!-- FAB -->
     <dimen name="fab_margin">16dp</dimen>
